@@ -1,9 +1,11 @@
+"use client";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Field, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { useState } from "react";
 
 const loginSchema = z.object({
   email: z.email(),
@@ -11,6 +13,7 @@ const loginSchema = z.object({
 });
 
 function LoginForm() {
+  const [loading, isLoading] = useState(false);
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -20,7 +23,16 @@ function LoginForm() {
   });
 
   function handleSubmit(data: { email: string; password: string }) {
-    console.log(data);
+    isLoading(true);
+    try {
+      console.log(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      } else {
+        console.log(error);
+      }
+    }
   }
 
   return (
@@ -57,7 +69,9 @@ function LoginForm() {
           />
         </FieldGroup>
 
-        <Button type="submit">Login</Button>
+        <Button type="submit" disabled={loading ? true : false}>
+          Login
+        </Button>
       </form>
     </div>
   );
