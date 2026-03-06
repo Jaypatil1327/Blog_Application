@@ -1,43 +1,104 @@
 "use client";
 
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import LoginForm from "./login";
 import RegisterForm from "./register";
 
 export type RegisterFormProps = {
   onSuccess: () => void;
 };
+
 function AuthTab() {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
 
   function onSuccess() {
     setActiveTab("login");
   }
-  function changeTab(val: any) {
-    setActiveTab(val);
-  }
+
   return (
-    <div className="p-4 md:w-120 w-90 min-h-70 rounded-2xl border-2 shadow-lg flex flex-col justify-start items-center gap-10">
-      <h1 className="text-center text-3xl font-bold text-shadow-md mt-3">
-        Welcome!
-      </h1>
-      <Tabs value={activeTab} onValueChange={changeTab} className="w-full">
-        <TabsList className="w-full flex justify-center items-center">
-          <TabsTrigger value="login" className="text-center">
+    <div className="auth-page-wrapper">
+      {/* Animated background orbs */}
+      <div className="orb orb-1" />
+      <div className="orb orb-2" />
+      <div className="orb orb-3" />
+
+      {/* 3D Card */}
+      <div className="auth-card">
+        {/* Glowing top border */}
+        <div className="card-glow-bar" />
+
+        {/* Header */}
+        <div className="auth-header">
+          <div className="auth-logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                stroke="url(#logoGrad)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <defs>
+                <linearGradient id="logoGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#818cf8" />
+                  <stop offset="1" stopColor="#c084fc" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <h1 className="auth-title">Welcome Back</h1>
+          <p className="auth-subtitle">Sign in to your account or create a new one</p>
+        </div>
+
+        {/* Tab switcher */}
+        <div className="tab-switcher">
+          <button
+            className={`tab-btn ${activeTab === "login" ? "tab-active" : ""}`}
+            onClick={() => setActiveTab("login")}
+            id="tab-login"
+          >
             Login
-          </TabsTrigger>
-          <TabsTrigger value="register" className="text-center">
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "register" ? "tab-active" : ""}`}
+            onClick={() => setActiveTab("register")}
+            id="tab-register"
+          >
             Register
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="login">
-          <LoginForm></LoginForm>
-        </TabsContent>
-        <TabsContent value="register">
-          <RegisterForm onSuccess={onSuccess}></RegisterForm>
-        </TabsContent>
-      </Tabs>
+          </button>
+          {/* Sliding indicator */}
+          <div className={`tab-indicator ${activeTab === "register" ? "tab-indicator-right" : ""}`} />
+        </div>
+
+        {/* Form area */}
+        <div className="form-area">
+          <div className={`form-slide ${activeTab === "login" ? "form-visible" : "form-hidden-left"}`}>
+            <LoginForm />
+          </div>
+          <div className={`form-slide ${activeTab === "register" ? "form-visible" : "form-hidden-right"}`}>
+            <RegisterForm onSuccess={onSuccess} />
+          </div>
+        </div>
+
+        {/* Footer */}
+        <p className="auth-footer">
+          {activeTab === "login" ? (
+            <>
+              Don&apos;t have an account?{" "}
+              <button className="auth-link" onClick={() => setActiveTab("register")}>
+                Sign up
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <button className="auth-link" onClick={() => setActiveTab("login")}>
+                Sign in
+              </button>
+            </>
+          )}
+        </p>
+      </div>
     </div>
   );
 }

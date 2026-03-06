@@ -23,6 +23,7 @@ const registerSchema = z
 
 function RegisterForm({ onSuccess }: RegisterFormProps) {
   const [loading, isLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -35,6 +36,7 @@ function RegisterForm({ onSuccess }: RegisterFormProps) {
 
   async function handleSubmit(data: z.infer<typeof registerSchema>) {
     isLoading(true);
+    setServerError(null);
 
     try {
       const { error } = await signUp.email({
@@ -43,12 +45,12 @@ function RegisterForm({ onSuccess }: RegisterFormProps) {
         email: data.email,
       });
       if (error) {
-        console.log(error.message);
+        setServerError(error.message ?? "Registration failed. Please try again.");
       } else {
-        console.log("Switching tab");
         onSuccess();
       }
     } catch (error) {
+      setServerError("An unexpected error occurred. Please try again.");
       console.log(error);
     } finally {
       isLoading(false);
@@ -116,6 +118,13 @@ function RegisterForm({ onSuccess }: RegisterFormProps) {
             )}
           />
         </FieldGroup>
+
+        {serverError && (
+          <p className="text-sm text-red-500 text-center font-medium">
+            {serverError}
+          </p>
+        )}
+
         <Button type="submit" disabled={loading ? true : false}>
           Register
         </Button>
